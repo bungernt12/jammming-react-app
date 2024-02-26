@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
+import Tracklist from "../Tracklist/Tracklist";
 
-function Playlist() {
-    return (
-        <div>
-            <p>Playlist Component</p>
-        </div>
-    )
-};
+function Playlist({ playlistTitle, playlist }) {
+  return (
+    <div>
+      <p>{playlistTitle}</p>
+      <Tracklist tracklist={playlist} />
+    </div>
+  );
+}
 
-export default Playlist;S
+export default Playlist;
