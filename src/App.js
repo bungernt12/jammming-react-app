@@ -1,10 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
 import Tracklist from './Components/Tracklist/Tracklist'
-
-const trackArray = [{songName: 'All My Days', artist: 'Alexi Murdoch', album: 'Tague Greatest Hits', id: '0'}, {songName: 'Mr. Brightside', artist: 'The Killers', album: 'Some Album', id: '1'}]
+import { useState } from 'react';
 
 function App() {
+  const [trackArray, setTrackArray] = useState([
+    {songName: 'All My Days', artist: 'Alexi Murdoch', album: 'Tague Greatest Hits', id: '0'},
+    {songName: 'Mr. Brightside', artist: 'The Killers', album: 'Some Album', id: '1'}
+  ])
+
   return (
     <div className="App">
       <header className="App-header">
@@ -22,11 +26,11 @@ function App() {
         </a>
         <p>test123</p>
       </header>
-      <body>
+      <div className='body'>
         <Tracklist trackArray={trackArray} />
         <button>Save To Spotify</button>
         <button>Search</button>
-      </body>
+      </div>
 
     </div>
   );
