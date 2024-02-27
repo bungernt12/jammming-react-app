@@ -5,7 +5,7 @@ function Playlist({ playlistTitle, playlist }) {
   return (
     <div>
       <p>{playlistTitle}</p>
-      <Tracklist tracklist={playlist} />
+      <Tracklist tracklist={playlist} trackInPlaylist={true} />
     </div>
   );
 }
