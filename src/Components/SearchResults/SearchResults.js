@@ -2,8 +2,6 @@ import React from "react";
 import Tracklist from "../Tracklist/Tracklist";
 
 function SearchResults({ resultsList, handleAddToPlaylist }) {
-  console.log(resultsList);
-
   return (
     <div>
       <p>Search Results</p>

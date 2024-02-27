@@ -8,7 +8,19 @@ function Track(props) {
       <p>Song: {props.trackInfo.songName}</p>
       <p>Artist: {props.trackInfo.artist}</p>
       <p>Album: {props.trackInfo.album}</p>
-      <button onClick={props.handleAddToPlaylist}>Add To Playlist</button>
+      <button onClick={() => props.handleAddToPlaylist(props.trackInfo)}>
+        Add To Playlist
+      </button>
+
+      {/* trying to only add buttons if the track components are being rendered
+      in the results list section */}
+      {/* {!props.playlist ? (
+        <button onClick={props.handleAddToPlaylist(props.trackInfo)}>
+          Add To Playlist
+        </button>
+      ) : (
+        ""
+      )} */}
     </div>
   );
 }

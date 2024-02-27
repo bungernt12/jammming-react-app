@@ -1,7 +1,7 @@
 import React from "react";
 import Track from "../Track/Track";
 
-function Tracklist({ tracklist, handleAddToPlaylist }) {
+function Tracklist({ tracklist, handleAddToPlaylist, playlistComp }) {
   return (
     <div id="trackListDiv">
       <p>Tracklist component</p>

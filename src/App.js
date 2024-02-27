@@ -22,9 +22,8 @@ function App() {
 
   const [playlistTitle, setPlaylistTitle] = useState("Tague's Boppin Playlist");
 
-  const [playlist, setPlaylist] = useState({
-    tracks: [],
-  });
+  const [playlist, setPlaylist] = useState([]);
+
   //This will be called when the plus button of track is clicked
   function handleAddToPlaylist(trackObj) {
     setPlaylist((prev) => [...prev, trackObj]);
