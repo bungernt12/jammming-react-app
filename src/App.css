@@ -1,3 +1,7 @@
+html {
+  background-color: rgb(62, 88, 62);
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +39,40 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lists {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+h2 {
+  color: white;
+}
+
+p {
+  color: rgb(168, 168, 168);
+}
+
+input {
+  background-color: #0000;
+  border: none;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  display: block;
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }

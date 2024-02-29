@@ -1,59 +1,71 @@
-import logo from "./logo.svg";
 import "./App.css";
 import Playlist from "./Components/Playlist/Playlist";
 import SearchResults from "./Components/SearchResults/SearchResults";
 import { useState } from "react";
+import Spotify from "./Spotify";
 
 function App() {
-  const [resultsList, setResultsList] = useState([
-    {
-      songName: "All My Days",
-      artist: "Alexi Murdoch",
-      album: "Tague Greatest Hits",
-      id: "0",
-    },
-    {
-      songName: "Mr. Brightside",
-      artist: "The Killers",
-      album: "Some Album",
-      id: "1",
-    },
-  ]);
+  const [resultsList, setResultsList] = useState([]);
 
-  const [playlistTitle, setPlaylistTitle] = useState("Tague's Boppin Playlist");
-
+  const [playlistTitle, setPlaylistTitle] = useState("");
   const [playlist, setPlaylist] = useState([]);
+  const [searchValue, setSearchVaue] = useState("");
+
+  function handleInputChange(e) {
+    setSearchVaue(e.target.value);
+  }
 
   //This will be called when the plus button of track is clicked
   function handleAddToPlaylist(trackObj) {
-    setPlaylist((prev) => [...prev, trackObj]);
+    if (!playlist.includes(trackObj)) {
+      setPlaylist((prev) => [...prev, trackObj]);
+    }
+  }
+
+  function handleRemoveFromPlaylist(trackObj) {
+    setPlaylist((prev) =>
+      prev.filter((currentTrackObj) => currentTrackObj !== trackObj)
+    );
+  }
+
+  function handleSubmit() {
+    const uriArray = [];
+    playlist.forEach((trackObj) => uriArray.push(trackObj.uri));
+    console.log(uriArray);
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <p>test123</p>
+        <h1>Spotify Playlist Creator</h1>
       </header>
       <div className="body">
-        <button>Search</button>
-        <SearchResults
-          resultsList={resultsList}
-          handleAddToPlaylist={handleAddToPlaylist}
-        />
-        <Playlist playlist={playlist} playlistTitle={playlistTitle} />
-        <button>Save To Spotify</button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            Spotify.search(searchValue);
+          }}
+        >
+          <input onChange={handleInputChange} placeholder="Song Search" />
+          <button>Search</button>
+        </form>
+
+        <div className="lists">
+          <SearchResults
+            resultsList={resultsList}
+            handleAddToPlaylist={handleAddToPlaylist}
+          />
+          <Playlist
+            playlist={playlist}
+            playlistTitle={playlistTitle}
+            setPlaylistTitle={setPlaylistTitle}
+            handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+          />
+        </div>
+        <button className="submitButton" onClick={handleSubmit}>
+          Save To Spotify
+        </button>
+        <button>Log Window Location</button>
       </div>
     </div>
   );
