@@ -15,6 +15,12 @@ function App() {
     setSearchVaue(e.target.value);
   }
 
+  async function handleSearch(e) {
+    e.preventDefault();
+    const adjustedResultsArray = await Spotify.search(searchValue);
+    setResultsList(adjustedResultsArray);
+  }
+
   //This will be called when the plus button of track is clicked
   function handleAddToPlaylist(trackObj) {
     if (!playlist.includes(trackObj)) {
@@ -40,21 +46,19 @@ function App() {
         <h1>Spotify Playlist Creator</h1>
       </header>
       <div className="body">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            Spotify.search(searchValue);
-          }}
-        >
+        <form onSubmit={handleSearch}>
           <input onChange={handleInputChange} placeholder="Song Search" />
           <button>Search</button>
         </form>
-
+        <button className="submitButton" onClick={Spotify.createPlaylist}>
+          Save To Spotify
+        </button>
         <div className="lists">
           <SearchResults
             resultsList={resultsList}
             handleAddToPlaylist={handleAddToPlaylist}
           />
+          {/* <Spotify setResultsList={setResultsList} /> */}
           <Playlist
             playlist={playlist}
             playlistTitle={playlistTitle}
@@ -62,10 +66,6 @@ function App() {
             handleRemoveFromPlaylist={handleRemoveFromPlaylist}
           />
         </div>
-        <button className="submitButton" onClick={handleSubmit}>
-          Save To Spotify
-        </button>
-        <button>Log Window Location</button>
       </div>
     </div>
   );

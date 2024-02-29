@@ -26,7 +26,7 @@ function Tracklist({
         })
       ) : (
         <div>
-          <p>Search for songs</p>
+          <p>Search for songs above</p>
           <p>Add them with the + button</p>
         </div>
       )}

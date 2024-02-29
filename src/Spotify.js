@@ -42,15 +42,18 @@ const Spotify = {
       accessUrl += "&redirect_uri=" + encodeURIComponent(redirect_uri);
       accessUrl += "&state=" + encodeURIComponent(state);
       window.location = accessUrl;
-    }
-    accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
-    expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
-    if (accessTokenMatch && expiresInMatch) {
-      accessToken = accessTokenMatch[1];
-      const expiresIn = Number(expiresInMatch[1]);
-      window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
-      window.history.pushState("Access Token", null, "/");
-      // return accessToken;
+      console.log(`Access url: ${accessUrl}`);
+
+      accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
+      expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
+      if (accessTokenMatch && expiresInMatch) {
+        accessToken = accessTokenMatch[1];
+        const expiresIn = Number(expiresInMatch[1]);
+        window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
+        window.history.pushState("Access Token", null, "/");
+        console.log(`Second accessTokenmatch: ${accessToken}`);
+        // return accessToken;
+      }
     }
   },
   async search(term) {
@@ -67,20 +70,41 @@ const Spotify = {
         throw new Error("Network response was poopy");
       } else {
         const jsonResponse = await response.json();
-        const adjustedResultsArray = jsonResponse.tracks.items.map((track) => {
-          return {
-            songName: track.name,
-            artist: track.artists[0].name,
-            album: track.album.name,
-            uri: track.uri,
-          };
-        });
+        const adjustedResultsArray = jsonResponse.tracks.items.map(
+          (track, index) => {
+            return {
+              id: index,
+              songName: track.name,
+              artist: track.artists[0].name,
+              album: track.album.name,
+              uri: track.uri,
+            };
+          }
+        );
         return adjustedResultsArray;
       }
     } catch (error) {
       console.error("Error fetching Tague data:", error);
     }
   },
+  //   async createPlaylist(playlistName, playlistUriArray) {
+  //     this.getAccessToken();
+  //     try {
+  //       console.log(`access token: ${accessToken}`);
+  //       const response = await fetch("https://api.spotify.com/v1/me", {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error("Network error, I think...");
+  //       }
+  //       const userInfo = await response.json();
+  //       console.log(userInfo);
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   },
 };
 
 export default Spotify;
