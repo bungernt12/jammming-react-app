@@ -17,11 +17,15 @@ const Spotify = {
   getAccessTokenOnLoad() {
     const ref = window.location.href;
 
+    //check to see if the access token is actually. so apparently this function
+    //returns the search term and sets the access token.
+
     let accessTokenMatch = ref.match(/access_token=([^&]*)/);
     let expiresInMatch = ref.match(/expires_in=([^&]*)/);
     if (accessTokenMatch && expiresInMatch) {
       console.log("setting access token");
       accessToken = accessTokenMatch[1];
+      console.log(accessToken);
       const expiresIn = Number(expiresInMatch[1]);
       window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
       window.history.pushState("Access Token", null, "/");
@@ -55,8 +59,9 @@ const Spotify = {
   },
 
   async search(term) {
-    this.getAccessToken(term);
     if (!accessToken) {
+      console.log("search this", this);
+      this.getAccessToken(term);
       return [];
     }
     const url = `https://api.spotify.com/v1/search?type=track&q=${term}`;
@@ -88,24 +93,29 @@ const Spotify = {
       console.error("Error fetching Tague data:", error);
     }
   },
-  //   async createPlaylist(playlistName, playlistUriArray) {
-  //     this.getAccessToken();
-  //     try {
-  //       console.log(`access token: ${accessToken}`);
-  //       const response = await fetch("https://api.spotify.com/v1/me", {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       });
-  //       if (!response.ok) {
-  //         throw new Error("Network error, I think...");
-  //       }
-  //       const userInfo = await response.json();
-  //       console.log(userInfo);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   },
+  async createPlaylist(playlistName, playlistUriArray) {
+    console.log("createPlaylist called successfully");
+    if (!accessToken) {
+      console.log("this", this);
+      this.getAccessToken("");
+      return;
+    }
+    try {
+      console.log(`access token: ${accessToken}`);
+      const response = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Network error, I think...");
+      }
+      const userInfo = await response.json();
+      console.log(userInfo);
+    } catch (e) {
+      console.log(e);
+    }
+  },
 };
 
 export default Spotify;

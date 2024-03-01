@@ -13,10 +13,12 @@ function App() {
   const [searchValue, setSearchValue] = useState("");
 
   window.onload = useEffect(() => {
+    console.log("mounted");
     window.onload = async () => {
       const searchTerm = Spotify.getAccessTokenOnLoad();
       console.log("in on load useeffect", searchTerm);
       if (searchTerm) {
+        console.log("in conditional statement");
         setSearchValue(searchTerm);
         const adjustedResultsArray = await Spotify.search(searchTerm);
         setResultsList(adjustedResultsArray);
@@ -71,9 +73,12 @@ function App() {
         >
           Search
         </button>
-        {/* <button className="submitButton" onClick={Spotify.createPlaylist}>
+        <button
+          className="submitButton"
+          onClick={() => Spotify.createPlaylist()}
+        >
           Save To Spotify
-        </button> */}
+        </button>
         <div className="lists">
           <SearchResults
             resultsList={resultsList}
