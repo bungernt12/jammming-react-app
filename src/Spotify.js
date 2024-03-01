@@ -37,6 +37,9 @@ const Spotify = {
     return "";
   },
 
+  //This method checks to see if accesstoken is defined. If not, it creates an access url. this access url
+  // submitted by window.location. this causes the page to reload, which triggers,
+  // getaccessTokenOnLoad, which then gets the access token from the response url.
   getAccessToken(term) {
     if (accessToken) {
       return accessToken;
@@ -93,27 +96,45 @@ const Spotify = {
       console.error("Error fetching Tague data:", error);
     }
   },
+
   async createPlaylist(playlistName, playlistUriArray) {
     console.log("createPlaylist called successfully");
     if (!accessToken) {
-      console.log("this", this);
       this.getAccessToken("");
       return;
     }
+
     try {
-      console.log(`access token: ${accessToken}`);
       const response = await fetch("https://api.spotify.com/v1/me", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
       if (!response.ok) {
         throw new Error("Network error, I think...");
       }
+
       const userInfo = await response.json();
-      console.log(userInfo);
-    } catch (e) {
-      console.log(e);
+      const createPlaylistUrlFetch = `https://api.spotify.com/v1/users/${userInfo.id}/playlists`;
+      //we have the access token and the user id at this point. its not clear if the user id is
+      //supposed to be a name or number.
+      const responseCreatePlaylist = await fetch(createPlaylistUrlFetch, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        method: "POST",
+        body: JSON.stringify({ name: playlistName }),
+      });
+      console.log("responseCreatePlaylist", responseCreatePlaylist);
+      if (!responseCreatePlaylist.ok) {
+        throw new Error("Failed to create playlist");
+      }
+
+      const playlistData = await responseCreatePlaylist.json();
+      console.log("Playlist created successfully:", playlistData);
+    } catch (error) {
+      console.error("Error creating playlist:", error);
     }
   },
 };

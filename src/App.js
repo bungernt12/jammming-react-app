@@ -75,7 +75,7 @@ function App() {
         </button>
         <button
           className="submitButton"
-          onClick={() => Spotify.createPlaylist()}
+          onClick={() => Spotify.createPlaylist(playlistTitle)}
         >
           Save To Spotify
         </button>
