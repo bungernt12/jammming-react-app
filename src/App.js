@@ -3,20 +3,36 @@ import Playlist from "./Components/Playlist/Playlist";
 import SearchResults from "./Components/SearchResults/SearchResults";
 import { useState } from "react";
 import Spotify from "./Spotify";
+import { useEffect } from "react";
 
 function App() {
   const [resultsList, setResultsList] = useState([]);
 
   const [playlistTitle, setPlaylistTitle] = useState("");
   const [playlist, setPlaylist] = useState([]);
-  const [searchValue, setSearchVaue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+
+  window.onload = useEffect(() => {
+    window.onload = async () => {
+      const searchTerm = Spotify.getAccessTokenOnLoad();
+      console.log("in on load useeffect", searchTerm);
+      if (searchTerm) {
+        setSearchValue(searchTerm);
+        const adjustedResultsArray = await Spotify.search(searchTerm);
+        setResultsList(adjustedResultsArray);
+      }
+    };
+
+    return () => {
+      console.log("unmounted");
+    };
+  }, []);
 
   function handleInputChange(e) {
-    setSearchVaue(e.target.value);
+    setSearchValue(e.target.value);
   }
 
-  async function handleSearch(e) {
-    e.preventDefault();
+  async function handleSearch() {
     const adjustedResultsArray = await Spotify.search(searchValue);
     setResultsList(adjustedResultsArray);
   }
@@ -46,13 +62,18 @@ function App() {
         <h1>Spotify Playlist Creator</h1>
       </header>
       <div className="body">
-        <form onSubmit={handleSearch}>
-          <input onChange={handleInputChange} placeholder="Song Search" />
-          <button>Search</button>
-        </form>
-        <button className="submitButton" onClick={Spotify.createPlaylist}>
-          Save To Spotify
+        <input onChange={handleInputChange} placeholder="Song Search" />
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+        >
+          Search
         </button>
+        {/* <button className="submitButton" onClick={Spotify.createPlaylist}>
+          Save To Spotify
+        </button> */}
         <div className="lists">
           <SearchResults
             resultsList={resultsList}

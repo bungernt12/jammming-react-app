@@ -14,50 +14,51 @@ const Spotify = {
     return result;
   },
 
-  getAccessToken() {
-    if (accessToken) {
-      return accessToken;
-    }
+  getAccessTokenOnLoad() {
+    const ref = window.location.href;
 
-    let accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
-    let expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
-    // console.log(`AccessTokenMatch: ${accessTokenMatch}`);
+    let accessTokenMatch = ref.match(/access_token=([^&]*)/);
+    let expiresInMatch = ref.match(/expires_in=([^&]*)/);
     if (accessTokenMatch && expiresInMatch) {
+      console.log("setting access token");
       accessToken = accessTokenMatch[1];
       const expiresIn = Number(expiresInMatch[1]);
       window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
       window.history.pushState("Access Token", null, "/");
-      // return accessToken;
-    } else {
-      // This is the authorization request that the implicit flow method told me to make.
-      var client_id = "a1b0e92c7a7f4ced86ef6c4a53db9561";
-      var scope = "playlist-modify-public";
-      var redirect_uri = "http://localhost:3000";
-      var state = this.generateRandomString(16);
-
-      var accessUrl = "https://accounts.spotify.com/authorize";
-      accessUrl += "?response_type=token";
-      accessUrl += "&client_id=" + encodeURIComponent(client_id);
-      accessUrl += "&scope=" + encodeURIComponent(scope);
-      accessUrl += "&redirect_uri=" + encodeURIComponent(redirect_uri);
-      accessUrl += "&state=" + encodeURIComponent(state);
-      window.location = accessUrl;
-      console.log(`Access url: ${accessUrl}`);
-
-      accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
-      expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
-      if (accessTokenMatch && expiresInMatch) {
-        accessToken = accessTokenMatch[1];
-        const expiresIn = Number(expiresInMatch[1]);
-        window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
-        window.history.pushState("Access Token", null, "/");
-        console.log(`Second accessTokenmatch: ${accessToken}`);
-        // return accessToken;
+      let stateInMatch = ref.match(/state=([^&]*)/);
+      if (stateInMatch) {
+        return stateInMatch[1];
       }
     }
+    return "";
   },
+
+  getAccessToken(term) {
+    if (accessToken) {
+      return accessToken;
+    }
+    // This is the authorization request that the implicit flow method told me to make.
+    var client_id = "a1b0e92c7a7f4ced86ef6c4a53db9561";
+    var scope = "playlist-modify-public";
+    var redirect_uri = "http://localhost:3000";
+    // var state = this.generateRandomString(16);
+
+    var accessUrl = "https://accounts.spotify.com/authorize";
+    accessUrl += "?response_type=token";
+    accessUrl += "&client_id=" + encodeURIComponent(client_id);
+    accessUrl += "&scope=" + encodeURIComponent(scope);
+    accessUrl += "&redirect_uri=" + encodeURIComponent(redirect_uri);
+    accessUrl += "&state=" + encodeURIComponent(term);
+    window.location = accessUrl;
+    console.log(`Access url: ${accessUrl}`);
+    console.log("Access Token" + accessToken);
+  },
+
   async search(term) {
-    this.getAccessToken();
+    this.getAccessToken(term);
+    if (!accessToken) {
+      return [];
+    }
     const url = `https://api.spotify.com/v1/search?type=track&q=${term}`;
     try {
       const response = await fetch(url, {
