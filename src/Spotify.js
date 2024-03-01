@@ -114,12 +114,11 @@ const Spotify = {
       if (!response.ok) {
         throw new Error("Network error, I think...");
       }
-
       const userInfo = await response.json();
-      const createPlaylistUrlFetch = `https://api.spotify.com/v1/users/${userInfo.id}/playlists`;
-      //we have the access token and the user id at this point. its not clear if the user id is
-      //supposed to be a name or number.
-      const responseCreatePlaylist = await fetch(createPlaylistUrlFetch, {
+
+      //post request to make playlist, then receive playlist data as a response.
+      const createPlaylistFetchUrl = `https://api.spotify.com/v1/users/${userInfo.id}/playlists`;
+      const responseCreatePlaylist = await fetch(createPlaylistFetchUrl, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -130,9 +129,24 @@ const Spotify = {
       if (!responseCreatePlaylist.ok) {
         throw new Error("Failed to create playlist");
       }
-
       const playlistData = await responseCreatePlaylist.json();
-      console.log("Playlist created successfully:", playlistData);
+
+      // post request to add tracks.
+      console.log("playlist uri array", playlistUriArray);
+      console.log("playlist id", playlistData.id);
+      console.log("playlist data", playlistData);
+      const addTrackFetchURL = `https://api.spotify.com/v1/playlists/${playlistData.id}/tracks`;
+      const responseAddTracksRequest = await fetch(addTrackFetchURL, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        method: "POST",
+        body: JSON.stringify({ uris: playlistUriArray }),
+      });
+      console.log("responseAddTracksRequest", responseAddTracksRequest);
+      if (!responseAddTracksRequest.ok) {
+        throw new Error("Failed to add tracks");
+      }
     } catch (error) {
       console.error("Error creating playlist:", error);
     }

@@ -52,10 +52,10 @@ function App() {
     );
   }
 
-  function handleSubmit() {
+  function handleSavePlaylistToSpotify() {
     const uriArray = [];
     playlist.forEach((trackObj) => uriArray.push(trackObj.uri));
-    console.log(uriArray);
+    Spotify.createPlaylist(playlistTitle, uriArray);
   }
 
   return (
@@ -73,11 +73,8 @@ function App() {
         >
           Search
         </button>
-        <button
-          className="submitButton"
-          onClick={() => Spotify.createPlaylist(playlistTitle)}
-        >
-          Save To Spotify
+        <button className="submitButton" onClick={handleSavePlaylistToSpotify}>
+          Save Playlist To Spotify
         </button>
         <div className="lists">
           <SearchResults
