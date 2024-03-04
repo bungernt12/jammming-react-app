@@ -1,18 +1,18 @@
 let accessToken;
 
 const Spotify = {
-  generateRandomString(length) {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
-  },
+  //   generateRandomString(length) {
+  //     let result = "";
+  //     const characters =
+  //       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  //     const charactersLength = characters.length;
+  //     let counter = 0;
+  //     while (counter < length) {
+  //       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  //       counter += 1;
+  //     }
+  //     return result;
+  //   },
 
   getAccessTokenOnLoad() {
     const ref = window.location.href;
@@ -23,12 +23,12 @@ const Spotify = {
     let accessTokenMatch = ref.match(/access_token=([^&]*)/);
     let expiresInMatch = ref.match(/expires_in=([^&]*)/);
     if (accessTokenMatch && expiresInMatch) {
-      console.log("setting access token");
       accessToken = accessTokenMatch[1];
-      console.log(accessToken);
       const expiresIn = Number(expiresInMatch[1]);
       window.setTimeout(() => (accessToken = ""), expiresIn * 1000);
       window.history.pushState("Access Token", null, "/");
+
+      //why does all this state stuff do? I think it somehow returns the search term.
       let stateInMatch = ref.match(/state=([^&]*)/);
       if (stateInMatch) {
         return stateInMatch[1];
@@ -57,13 +57,10 @@ const Spotify = {
     accessUrl += "&redirect_uri=" + encodeURIComponent(redirect_uri);
     accessUrl += "&state=" + encodeURIComponent(term);
     window.location = accessUrl;
-    console.log(`Access url: ${accessUrl}`);
-    console.log("Access Token" + accessToken);
   },
 
   async search(term) {
     if (!accessToken) {
-      console.log("search this", this);
       this.getAccessToken(term);
       return [];
     }
@@ -97,10 +94,21 @@ const Spotify = {
     }
   },
 
-  async createPlaylist(playlistName, playlistUriArray) {
-    console.log("createPlaylist called successfully");
+  async createPlaylist(playlistName, playlistUriArray, playlistSaved) {
     if (!accessToken) {
       this.getAccessToken("");
+      return;
+    }
+
+    if (!playlistName) {
+      alert("Don't forget playlist name!");
+      return;
+    }
+
+    if (playlistSaved) {
+      alert(
+        "This playlist has already been saved. Reload the page to save another."
+      );
       return;
     }
 
@@ -132,9 +140,6 @@ const Spotify = {
       const playlistData = await responseCreatePlaylist.json();
 
       // post request to add tracks.
-      console.log("playlist uri array", playlistUriArray);
-      console.log("playlist id", playlistData.id);
-      console.log("playlist data", playlistData);
       const addTrackFetchURL = `https://api.spotify.com/v1/playlists/${playlistData.id}/tracks`;
       const responseAddTracksRequest = await fetch(addTrackFetchURL, {
         headers: {
@@ -147,6 +152,9 @@ const Spotify = {
       if (!responseAddTracksRequest.ok) {
         throw new Error("Failed to add tracks");
       }
+      alert(
+        `Nice! "${playlistName}" was saved to your spotify playlists. You should be able to find it in your library.`
+      );
     } catch (error) {
       console.error("Error creating playlist:", error);
     }

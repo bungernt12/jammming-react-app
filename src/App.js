@@ -11,7 +11,14 @@ function App() {
   const [playlistTitle, setPlaylistTitle] = useState("");
   const [playlist, setPlaylist] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [playlistSaved, setPlaylistSaved] = useState(false);
 
+  //when window is reloaded, the useeffect is called.
+  //is useeffect used to stop the mounting from happening several times? so it only happens on the first one?
+  //get accesstokenonload does what it says, which will only happen if its in the URL, and if it does do that, it returns the search term.
+  //how does it know the search term? it knows the term because getAccessToken takes it as a parameter and puts in the url.
+  //getAccessToken gets passed the search term when search is called. thats complicated. I wonder how it can be simplified.
+  //for some reason clicking "save playlist to spotify" caused the page to reload, clearing search results/playlist.
   window.onload = useEffect(() => {
     console.log("mounted");
     window.onload = async () => {
@@ -30,10 +37,12 @@ function App() {
     };
   }, []);
 
+  // for search and playlist title inputs
   function handleInputChange(e) {
     setSearchValue(e.target.value);
   }
 
+  // when search button is clicked
   async function handleSearch() {
     const adjustedResultsArray = await Spotify.search(searchValue);
     setResultsList(adjustedResultsArray);
@@ -46,18 +55,26 @@ function App() {
     }
   }
 
+  //This will be called when the plus button of track is clicked
   function handleRemoveFromPlaylist(trackObj) {
     setPlaylist((prev) =>
       prev.filter((currentTrackObj) => currentTrackObj !== trackObj)
     );
   }
 
+  //creates uri array, adds to it, then uses method from spotify object
   function handleSavePlaylistToSpotify() {
     const uriArray = [];
     playlist.forEach((trackObj) => uriArray.push(trackObj.uri));
-    Spotify.createPlaylist(playlistTitle, uriArray);
+    Spotify.createPlaylist(playlistTitle, uriArray, playlistSaved);
+    if (playlistTitle) {
+      setPlaylistSaved(true);
+    }
   }
 
+  if (false) {
+    return;
+  }
   return (
     <div className="App">
       <header className="App-header">
@@ -81,7 +98,6 @@ function App() {
             resultsList={resultsList}
             handleAddToPlaylist={handleAddToPlaylist}
           />
-          {/* <Spotify setResultsList={setResultsList} /> */}
           <Playlist
             playlist={playlist}
             playlistTitle={playlistTitle}
