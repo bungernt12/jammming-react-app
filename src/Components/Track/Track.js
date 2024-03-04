@@ -1,10 +1,9 @@
 import React from "react";
 import styles from "./Track.module.css";
-import { useState } from "react";
+// import { useState } from "react";
+import playButton from "../../resources/play-button.svg";
 
 function Track(props) {
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
   return (
     // This is not working right now. I don't see a border.
     <div className={styles.trackBox}>
@@ -18,29 +17,28 @@ function Track(props) {
       {/* trying to only add + buttons if the track components are being rendered
       in the results list section and - button if its rendered in the playlist section.
       Also trying to re-enable button of the same track when - button is clicked. */}
-
-      {props.trackInPlaylist ? (
-        <button
-          className={styles.button}
-          onClick={() => {
-            props.handleRemoveFromPlaylist(props.trackInfo);
-            setIsButtonDisabled(false);
-          }}
-        >
-          -
-        </button>
-      ) : (
-        <button
-          className={styles.button}
-          // disabled={isButtonDisabled}
-          onClick={() => {
-            props.handleAddToPlaylist(props.trackInfo);
-            setIsButtonDisabled(true);
-          }}
-        >
-          +
-        </button>
-      )}
+      <div className={styles.trackButtons}>
+        <img src={playButton} alt="play-button" className={styles.playButton} />
+        {props.trackInPlaylist ? (
+          <button
+            className={styles.button}
+            onClick={() => {
+              props.handleRemoveFromPlaylist(props.trackInfo);
+            }}
+          >
+            -
+          </button>
+        ) : (
+          <button
+            className={styles.button}
+            onClick={() => {
+              props.handleAddToPlaylist(props.trackInfo);
+            }}
+          >
+            +
+          </button>
+        )}
+      </div>
     </div>
   );
 }
