@@ -1,15 +1,8 @@
 import React from "react";
 import styles from "./Track.module.css";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import sound from "./resources/AMD.mp3";
-import {
-  IoPlayBackSharp,
-  IoPlayForwardSharp,
-  IoPlaySkipBackSharp,
-  IoPlaySkipForwardSharp,
-  IoPlaySharp,
-  IoPauseSharp,
-} from "react-icons/io5";
+import { IoPlaySharp, IoPauseSharp } from "react-icons/io5";
 
 function Track(props) {
   // const startAudio = () => {
